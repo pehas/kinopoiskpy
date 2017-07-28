@@ -2,7 +2,7 @@
 from bs4 import BeautifulSoup
 from future.utils import python_2_unicode_compatible
 
-from .sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries
+from .sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries, MovieStillsPage
 from ..utils import KinopoiskObject, Manager, get_request
 
 
