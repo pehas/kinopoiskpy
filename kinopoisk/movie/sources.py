@@ -189,7 +189,17 @@ class MovieMainPage(KinopoiskPage):
         rating = content_info.find('span', attrs={'class': 'rating_ball'})
         if rating:
             instance.rating = float(rating.string)
-
+        
+        block_rating = content_info.find('div', attrs={'id': 'block_rating'})
+        if block_rating:
+            div1 = block_rating.find('div', attrs={'class': 'div1'})
+            if div1:
+                div_rating = div1.find_next('div')
+                if div_rating:
+                    rating_imdbs = re.findall(r'IMDb: ([0-9\.]+)', div_rating.text)
+                    if len(rating_imdbs):
+                        instance.rating_imdb = float(rating_imdbs[0])
+ 
         trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', content)
         if len(trailers):
             instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
