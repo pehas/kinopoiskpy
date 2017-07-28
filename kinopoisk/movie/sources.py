@@ -222,6 +222,14 @@ class MoviePostersPage(KinopoiskImagesPage):
     field_name = 'posters'
 
 
+class MovieStillsPage(KinopoiskImagesPage):
+    """
+    Parser of movie stills page
+    """
+    url = '/film/%d/stills/'
+    field_name = 'stills'
+
+
 class MovieTrailersPage(KinopoiskPage):
     """
     Parser of kinopoisk trailers page
