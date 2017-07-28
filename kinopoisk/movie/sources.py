@@ -165,6 +165,9 @@ class MovieMainPage(KinopoiskPage):
                     except ValueError:
                         pass
                     instance.series = 'сезон' in value
+                elif name == 'режиссер':
+                     for ac in tds[1].findAll('a'):
+                         instance.directors.append(self.prepare_str(ac.text))
                 elif name == 'страна':
                     countries = value.split(', ')
                     for country in countries:
