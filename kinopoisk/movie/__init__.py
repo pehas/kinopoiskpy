@@ -34,6 +34,7 @@ class Movie(KinopoiskObject):
         self.rating = None
         self.rating_imdb = None
         self.runtime = None
+        self.age = None
         self.release = None
 
         self.posters = []

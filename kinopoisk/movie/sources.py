@@ -168,6 +168,12 @@ class MovieMainPage(KinopoiskPage):
                 elif name == 'режиссер':
                      for ac in tds[1].findAll('a'):
                          instance.directors.append(self.prepare_str(ac.text))
+                elif name == 'сценарий':
+                     for ac in tds[1].findAll('a'):
+                         instance.scenarios.append(self.prepare_str(ac.text))
+                elif name == 'продюсер':
+                     for ac in tds[1].findAll('a'):
+                         instance.producers.append(self.prepare_str(ac.text))
                 elif name == 'страна':
                     countries = value.split(', ')
                     for country in countries:
@@ -185,6 +191,11 @@ class MovieMainPage(KinopoiskPage):
                     instance.profit_russia = self.find_profit(tds[1])
                 elif name == 'сборы в мире':
                     instance.profit_world = self.find_profit(tds[1])
+                elif name == 'возраст':
+                    try:
+                        instance.profit_world = self.prepare_str(tr.findAll('span')[0].text)
+                    except Exception:
+                        pass
 
         rating = content_info.find('span', attrs={'class': 'rating_ball'})
         if rating:
