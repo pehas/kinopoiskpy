@@ -14,6 +14,7 @@ class Person(KinopoiskObject):
         self.information = ''
 
         self.year_birth = None
+        self.date_birth = None
 
         self.photos = []
 
