@@ -168,14 +168,17 @@ class MovieMainPage(KinopoiskPage):
                         pass
                     instance.series = 'сезон' in value
                 elif name == 'режиссер':
-                     for ac in tds[1].findAll('a'):
-                         instance.directors.append(self.prepare_str(ac.text))
+                    for ac in tds[1].findAll('a'):
+                        if ac.text != '...':
+                            instance.directors.append(self.prepare_str(ac.text))
                 elif name == 'сценарий':
-                     for ac in tds[1].findAll('a'):
-                         instance.scenarios.append(self.prepare_str(ac.text))
+                    for ac in tds[1].findAll('a'):
+                        if ac.text != '...':
+                            instance.scenarios.append(self.prepare_str(ac.text))
                 elif name == 'продюсер':
-                     for ac in tds[1].findAll('a'):
-                         instance.producers.append(self.prepare_str(ac.text))
+                    for ac in tds[1].findAll('a'):
+                        if ac.text != '...':
+                            instance.producers.append(self.prepare_str(ac.text))
                 elif name == 'страна':
                     countries = value.split(', ')
                     for country in countries:
