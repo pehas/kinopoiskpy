@@ -59,7 +59,7 @@ class PersonMainPage(KinopoiskPage):
         for name, value in content_info:
             if str(name) == 'дата рождения':
                 date_birth = re.compile(
-                    r'<a href="/lists/m_act%5Bbirthday%5D%5Bday%5D/13/m_act%5Bbirthday%5D%5Bmonth%5D/\w*/">(.+?)</a>'
+                    r'<a href="/lists/m_act%5Bbirthday%5D%5Bday%5D/\d{2}/m_act%5Bbirthday%5D%5Bmonth%5D/\w*/">(.+?)</a>'
                 ).findall(value)
                 year_birth = re.compile(r'<a href="/lists/m_act%5Bbirthday%5D%5Byear%5D/\d{4}/">(\d{4})</a>').findall(
                     value)
