@@ -85,6 +85,7 @@ class KinopoiskObject(object):
     _urls = {}
     _sources = []
     _source_classes = {}
+    _image_count = 0
 
     def __init__(self, id=None, **kwargs):
         if id:
@@ -131,6 +132,12 @@ class KinopoiskObject(object):
         instance = class_name()
         instance.content_name = name
         return instance
+
+    def set_image_count(self, count=21):
+        self._image_count = count
+
+    def get_image_count(self):
+        return self._image_count
 
 
 class KinopoiskImage(KinopoiskObject):
@@ -235,7 +242,8 @@ class KinopoiskImagesPage(KinopoiskPage):
         if table:
             self.parse(instance, str(table[0]))
             # may be there is more pages?
-            if len(getattr(instance, self.field_name)) % 21 == 0:
+            if len(getattr(instance, self.field_name)) % 21 == 0 \
+                    and len(getattr(instance, self.field_name)) != instance.get_image_count():
                 try:
                     self.get(instance, page + 1)
                 except ValueError:
@@ -248,7 +256,7 @@ class KinopoiskImagesPage(KinopoiskPage):
 
         from bs4 import BeautifulSoup
         links = BeautifulSoup(content, 'lxml').findAll('a')
-        for link in links:
+        for count, link in enumerate(links, start=1):
 
             img_id = re.compile(r'/picture/(\d+)/').findall(link['href'])
             picture = KinopoiskImage(int(img_id[0]))
@@ -261,6 +269,8 @@ class KinopoiskImagesPage(KinopoiskPage):
                 img_url = img['src']
                 if img_url not in urls:
                     urls.append(img_url)
+            if count >= instance.get_image_count():
+                break
 
         setattr(instance, self.field_name, urls)
         instance.set_source(self.content_name)
