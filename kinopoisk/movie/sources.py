@@ -198,7 +198,12 @@ class MovieMainPage(KinopoiskPage):
                     instance.profit_world = self.find_profit(tds[1])
                 elif name == 'возраст':
                     try:
-                        instance.profit_world = self.prepare_str(tr.findAll('span')[0].text)
+                        instance.age = self.prepare_str(tr.findAll('span')[0].text)
+                    except Exception:
+                        pass
+                elif name == 'премьера (мир)' or name == 'премьера (РФ)':
+                    try:
+                        instance.release = self.prepare_date(tr.findAll('a')[0].text)
                     except Exception:
                         pass
 
