@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import re
 
 from builtins import str
+from bs4 import BeautifulSoup
 
 from ..utils import KinopoiskPage, KinopoiskImagesPage, get_request
 
@@ -67,6 +68,8 @@ class PersonMainPage(KinopoiskPage):
                     instance.year_birth = self.prepare_int(year_birth[0])
                 if year_birth and date_birth:
                     instance.date_birth = self.prepare_date(date_birth[0] + ' ' + year_birth[0])
+            elif str(name) == 'место рождения':
+                instance.bpl = self.prepare_str(BeautifulSoup(value, "html.parser").text)
 
         if instance.id:
             response = get_request(instance.get_url('info'))

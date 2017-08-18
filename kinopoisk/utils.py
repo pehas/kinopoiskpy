@@ -6,20 +6,21 @@ import re
 from builtins import str
 
 
-def get_request(url, params=None):
+def get_request(url, params=None, cookies=None):
     import requests
-    return requests.get(url, params=params, headers={
-        'User-Agent': 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214 Linux Mint/8 (Helena) Firefox/'
-                      '3.5.8',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'ru,en-us;q=0.7,en;q=0.3',
+    session = requests.Session()
+    return session.get(url, params=params, cookies=cookies, headers={
+        'User-Agent': 'Mozilla/5.0 (Windows NT 5.1) Gecko/20100101 Firefox/47.0',
+        'Accept': 'text/html,application/xhtml+xml,application/xml',
+        'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
         'Accept-Encoding': 'deflate',
-        'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.7',
+        'Accept-Charset': 'utf-8;q=0.7',
         'Keep-Alive': '300',
         'Connection': 'keep-alive',
         'Referer': 'http://www.kinopoisk.ru/',
-        'Cookie': 'users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;'
-                  '                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
+        'Host': 'www.kinopoisk.ru',
+        'Cache-Control': 'max-age=0',
+        'Cookie': 'Cookie:mobile=no; _ym_uid=14900213541018655239; _ym_visorc_22663942=b; _ym_isad=2; fuid01=58cfebe9097067be.ahOGZiOuHmflZ601e8gZxplV9yeDaQsXr1abRM2Hx9NqG4KZ_bpteb8bpae7mgFaaOXD35V84mEBY69VN9EkhyJryn3bzUTZGiHstpYXRn3MyAGGXki5_JaNkPmNddDT; yandexuid=3547335161490021353; refresh_yandexuid=3547335161490021353; PHPSESSID=li6f4elclu3j6on6fbbnmt69s6; yandex_gid=10466; user_country=ot; last_visit=2017-03-20+17%3A53%3A39; noflash=false',
     })
 
 
@@ -54,6 +55,7 @@ class Manager(object):
                 for result in results:
                     instance = self.kinopoisk_object()
                     instance.parse('link', str(result))
+                    instance.cookies = response.cookies.get_dict()
                     if instance.id:
                         instances += [instance]
                 return instances
@@ -80,6 +82,8 @@ class Manager(object):
 
 class KinopoiskObject(object):
     id = None
+    url = None
+    cookies = None
     objects = None
 
     _urls = {}
@@ -117,9 +121,10 @@ class KinopoiskObject(object):
         url = self._urls.get(name)
         if not url:
             raise ValueError('There is no urlpage with name "%s"' % name)
-        if not self.id:
-            raise ValueError('ID of object is empty')
-        return 'http://www.kinopoisk.ru' + url % self.id + postfix
+        if not self.id and not self.url:
+            raise ValueError('ID or URL of object is empty')
+        url_id_url = self.url if self.url else self.id
+        return 'http://www.kinopoisk.ru' + url % url_id_url + postfix
 
     def set_source(self, name):
         if name not in self._sources:
@@ -207,7 +212,7 @@ class KinopoiskPage(object):
 
     def get(self, instance):
         if instance.id:
-            response = get_request(instance.get_url(self.content_name))
+            response = get_request(instance.get_url(self.content_name), instance.cookies)
             response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
             # content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]

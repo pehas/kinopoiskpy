@@ -62,6 +62,7 @@ class MovieLink(KinopoiskPage):
                 # /level/1/film/342/sr/1/
                 # /film/brigada-2002-77039/sr/1/
                 instance.id = self.prepare_int(link['href'].split('/')[2].split('-')[-1])
+                instance.url = self.prepare_str(link['href'].split('/')[2])
                 # instance.id = self.prepare_int(link['data-id'])
                 instance.title = self.prepare_str(link.text)
                 instance.series = '(сериал)' in instance.title
@@ -125,7 +126,7 @@ class MovieMainPage(KinopoiskPage):
     """
     Parser of main movie page
     """
-    url = '/film/%d/'
+    url = '/film/%s/'
 
     def parse(self, instance, content):
 
@@ -239,7 +240,7 @@ class MoviePostersPage(KinopoiskImagesPage):
     """
     Parser of movie posters page
     """
-    url = '/film/%d/posters/'
+    url = '/film/%s/posters/'
     field_name = 'posters'
 
 
@@ -247,7 +248,7 @@ class MovieStillsPage(KinopoiskImagesPage):
     """
     Parser of movie stills page
     """
-    url = '/film/%d/stills/'
+    url = '/film/%s/stills/'
     field_name = 'stills'
 
 
@@ -255,7 +256,7 @@ class MovieTrailersPage(KinopoiskPage):
     """
     Parser of kinopoisk trailers page
     """
-    url = '/film/%d/video/'
+    url = '/film/%s/video/'
 
     def parse(self, instance, content):
         trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', content)

@@ -12,6 +12,7 @@ class Person(KinopoiskObject):
         self.name = ''
         self.name_original = ''
         self.information = ''
+        self.bpl = ''
 
         self.year_birth = None
         self.date_birth = None
