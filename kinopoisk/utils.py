@@ -10,7 +10,8 @@ def get_request(url, params=None, cookies=None):
     import requests
     session = requests.Session()
     return session.get(url, params=params, cookies=cookies, headers={
-        'User-Agent': 'Mozilla/5.0 (Windows NT 5.1) Gecko/20100101 Firefox/47.0',
+        'Upgrade-Insecure-Requests': '1',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml',
         'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
         'Accept-Encoding': 'deflate',
@@ -20,7 +21,6 @@ def get_request(url, params=None, cookies=None):
         'Referer': 'http://www.kinopoisk.ru/',
         'Host': 'www.kinopoisk.ru',
         'Cache-Control': 'max-age=0',
-        'Cookie': 'Cookie:mobile=no; _ym_uid=14900213541018655239; _ym_visorc_22663942=b; _ym_isad=2; fuid01=58cfebe9097067be.ahOGZiOuHmflZ601e8gZxplV9yeDaQsXr1abRM2Hx9NqG4KZ_bpteb8bpae7mgFaaOXD35V84mEBY69VN9EkhyJryn3bzUTZGiHstpYXRn3MyAGGXki5_JaNkPmNddDT; yandexuid=3547335161490021353; refresh_yandexuid=3547335161490021353; PHPSESSID=li6f4elclu3j6on6fbbnmt69s6; yandex_gid=10466; user_country=ot; last_visit=2017-03-20+17%3A53%3A39; noflash=false',
     })
 
 
@@ -213,6 +213,10 @@ class KinopoiskPage(object):
     def get(self, instance):
         if instance.id:
             response = get_request(instance.get_url(self.content_name), instance.cookies)
+            dict_cookies = dict()
+            for cookie in response.cookies:
+                dict_cookies[cookie.name] = cookie.value
+            instance.cookies = dict_cookies if dict_cookies else instance.cookies
             response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
             # content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
@@ -231,7 +235,11 @@ class KinopoiskImagesPage(KinopoiskPage):
     field_name = None
 
     def get(self, instance, page=1):
-        response = get_request(instance.get_url(self.content_name, postfix='page/%d/' % page))
+        response = get_request(instance.get_url(self.content_name, postfix='page/%d/' % page), instance.cookies)
+        dict_cookies = dict()
+        for cookie in response.cookies:
+            dict_cookies[cookie.name] = cookie.value
+        instance.cookies = dict_cookies if dict_cookies else instance.cookies
         response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
 
