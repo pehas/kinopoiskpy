@@ -9,6 +9,9 @@ from builtins import str
 def get_request(url, params=None, cookies=None):
     import requests
     session = requests.Session()
+    if cookies is None:
+        session.get('http://www.kinopoisk.ru/')
+        cookies = session.cookies.get_dict()
     return session.get(url, params=params, cookies=cookies, headers={
         'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
@@ -212,7 +215,7 @@ class KinopoiskPage(object):
 
     def get(self, instance):
         if instance.id:
-            response = get_request(instance.get_url(self.content_name), instance.cookies)
+            response = get_request(instance.get_url(self.content_name), cookies=instance.cookies)
             dict_cookies = dict()
             for cookie in response.cookies:
                 dict_cookies[cookie.name] = cookie.value
@@ -235,7 +238,7 @@ class KinopoiskImagesPage(KinopoiskPage):
     field_name = None
 
     def get(self, instance, page=1):
-        response = get_request(instance.get_url(self.content_name, postfix='page/%d/' % page), instance.cookies)
+        response = get_request(instance.get_url(self.content_name, postfix='page/%d/' % page), cookies=instance.cookies)
         dict_cookies = dict()
         for cookie in response.cookies:
             dict_cookies[cookie.name] = cookie.value
