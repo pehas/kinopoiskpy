@@ -94,7 +94,9 @@ class MovieSeries(KinopoiskPage):
     url = '/film/%s/episodes/'
 
     def parse(self, instance, content):
+        import datetime
         soup = BeautifulSoup(content, 'lxml')
+        year = datetime.datetime.now().year
         for season in soup.findAll('h1', attrs={'class': 'moviename-big'}):
             if '21px' not in season['style']:
                 continue
